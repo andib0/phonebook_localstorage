@@ -22,20 +22,30 @@ const DisplayContacts: FC<TDisplayContacts> = ({
         contacts?.map((contact, index) => (
           <div
             key={index}
-            className="border border-gray-300 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 bg-[#0a192f] h-72"
+            className="border border-gray-300 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 bg-[#0a192f] "
           >
             <div className="space-y-3">
               <p className="font-bold text-xl text-[#CCD6F6]">
                 {contact.firstName} {contact.lastName}
               </p>
               <p className="text-[#8892B0]">
-                <span className="text-[#CCD6F6] font-medium">Email:</span>{" "}
-                {contact.email}
+                <span className="text-[#CCD6F6] font-medium">Email(s):</span>
+                <ul className="list-disc list-inside">
+                  {contact.email.map((e, i) => (
+                    <li key={i}>{e}</li>
+                  ))}
+                </ul>
               </p>
+
               <p className="text-[#8892B0]">
-                <span className="text-[#CCD6F6] font-medium">Phone:</span>{" "}
-                {contact.phoneNumber}
+                <span className="text-[#CCD6F6] font-medium">Phone(s):</span>
+                <ul className="list-disc list-inside">
+                  {contact.phoneNumber.map((p, i) => (
+                    <li key={i}>{p}</li>
+                  ))}
+                </ul>
               </p>
+
               {contact.address && (
                 <p className="text-[#8892B0]">
                   <span className="text-[#CCD6F6] font-medium">Address:</span>{" "}

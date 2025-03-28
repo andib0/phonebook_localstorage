@@ -1,4 +1,4 @@
-import { forwardRef, InputHTMLAttributes } from "react";
+import { FC, forwardRef, InputHTMLAttributes } from "react";
 
 type InputProps = {
   id: string;
@@ -6,7 +6,7 @@ type InputProps = {
   error?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
+const Input: FC<InputProps> = forwardRef<HTMLInputElement, InputProps>(
   ({ id, label, error, className, ...props }, ref) => {
     return (
       <div>

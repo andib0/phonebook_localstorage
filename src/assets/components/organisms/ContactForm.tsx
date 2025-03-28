@@ -1,9 +1,10 @@
 import { FC, useEffect } from "react";
 import { ContactFormData, contactSchema } from "../../../schema/contactSchema";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
+import { toast } from "react-toastify";
 
 type ContactFormProps = {
   initialData: ContactFormData | null;
@@ -22,6 +23,7 @@ const ContactForm: FC<ContactFormProps> = ({
   setVisible,
 }) => {
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -34,10 +36,25 @@ const ContactForm: FC<ContactFormProps> = ({
       address: "",
       city: "",
       country: "",
-      email: "",
-      phoneNumber: "",
+      email: [""],
+      phoneNumber: [""],
     },
   });
+
+  //Show a toast error based on error key from zod
+  toast.error(Object.keys(errors)[0]);
+
+  const {
+    fields: emailFields,
+    append: appendEmail,
+    remove: removeEmail,
+  } = useFieldArray({ control, name: "email" as never });
+
+  const {
+    fields: phoneFields,
+    append: appendPhone,
+    remove: removePhone,
+  } = useFieldArray({ control, name: "phoneNumber" as never });
 
   const onSubmit = (data: ContactFormData) => {
     if (initialData) {
@@ -61,8 +78,8 @@ const ContactForm: FC<ContactFormProps> = ({
         address: "",
         city: "",
         country: "",
-        email: "",
-        phoneNumber: "",
+        email: [""],
+        phoneNumber: [""],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +88,7 @@ const ContactForm: FC<ContactFormProps> = ({
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-2 p-4 gap-4">
+        <div className="flex flex-col gap-4 w-full align-middle justify-center place-items-center">
           <Input
             id="firstName"
             label="First Name"
@@ -111,35 +128,76 @@ const ContactForm: FC<ContactFormProps> = ({
             placeholder="Country"
             error={errors.country?.message}
           />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col">
+                {emailFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="col-span-2 flex gap-2 items-end"
+                  >
+                    <Input
+                      id="email"
+                      label={`Email ${index + 1}`}
+                      {...register(`email.${index}`)}
+                      error={errors.email?.[index]?.message}
+                    />
+                    {emailFields.length > 1 && (
+                      <Button
+                        title="Remove"
+                        type="button"
+                        onClick={() => removeEmail(index)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+              <Button
+                title="✚"
+                type="button"
+                onClick={() => appendEmail("")}
+                fullyRounded
+              />
+            </div>
 
-          <Input
-            id="email"
-            label="Email"
-            type="email"
-            {...register("email")}
-            placeholder="Email"
-            error={errors.email?.message}
-          />
+            <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col">
+                {phoneFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="col-span-2 flex gap-2 items-end "
+                  >
+                    <Input
+                      key={field.id}
+                      id="phoneNumber"
+                      label={`Phone Number ${index + 1}`}
+                      {...register(`phoneNumber.${index}`)}
+                      error={errors.phoneNumber?.[index]?.message}
+                    />
+                    {phoneFields.length > 1 && (
+                      <Button
+                        title="Remove"
+                        type="button"
+                        onClick={() => removePhone(index)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+              <Button
+                title="✚"
+                type="button"
+                onClick={() => appendPhone("")}
+                fullyRounded
+              />
+            </div>
+          </div>
 
-          <Input
-            id="phoneNumber"
-            label="Phone Number"
-            placeholder="Phone Number"
-            {...register("phoneNumber")}
-            error={errors.phoneNumber?.message}
+          <Button
+            title={initialData ? "Update Contact" : "Add Contact"}
+            type="submit"
           />
         </div>
-
-        {/* <button
-          type="submit"
-          className="px-4 py-2 border-2 border-[#64FFDA] text-[#64FFDA] rounded hover:bg-blue-700 w-fit h-fit"
-        >
-          {initialData ? "Update Contact" : "Add Contact"}
-        </button> */}
-        <Button
-          title={initialData ? "Update Contact" : "Add Contact"}
-          type="submit"
-        />
       </form>
     </div>
   );

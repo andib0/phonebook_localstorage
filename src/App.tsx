@@ -38,11 +38,7 @@ function App() {
           }}
         />
       </div>
-      <Modal
-        visible={visible}
-        setVisible={setVisible}
-        title="Add or Update Contact"
-      >
+      <Modal visible={visible} setVisible={setVisible} title="Contact">
         <ContactForm
           onAdd={onAdd}
           onUpdate={onUpdate}
